@@ -4,8 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { productSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
+// Action: Tambah produk baru
 export async function createProductAction(data: unknown) {
-  // 1. Validasi ulang di server (Keamanan No. 1)
+  // Validasi input di sisi server sebelum menyentuh database
   const result = productSchema.safeParse(data);
 
   if (!result.success) {
@@ -16,30 +17,19 @@ export async function createProductAction(data: unknown) {
   }
 
   try {
-    // 2. Simpan ke database
-    await prisma.product.create({
-      data: result.data,
-    });
-
-    // 3. Revalidasi path agar halaman list product terupdate
-    revalidatePath("/products");
-    
+    await prisma.product.create({ data: result.data });
+    revalidatePath("/products"); // Refresh cache halaman produk
     return { success: true };
   } catch (error) {
     console.log(error);
-    return { 
-      success: false, 
-      message: "Terjadi kesalahan pada database." 
-    };
+    return { success: false, message: "Terjadi kesalahan pada database." };
   }
 }
 
-// Tambahkan action hapus
+// Action: Hapus produk berdasarkan ID
 export async function deleteProductAction(id: string) {
   try {
-    await prisma.product.delete({
-      where: { id },
-    });
+    await prisma.product.delete({ where: { id } });
     revalidatePath("/products");
     return { success: true };
   } catch (error) {
@@ -48,8 +38,9 @@ export async function deleteProductAction(id: string) {
   }
 }
 
-// Tambahkan action edit
+// Action: Update data produk berdasarkan ID
 export async function updateProductAction(id: string, data: unknown) {
+  // Validasi input sebelum update
   const result = productSchema.safeParse(data);
 
   if (!result.success) {
@@ -57,10 +48,7 @@ export async function updateProductAction(id: string, data: unknown) {
   }
 
   try {
-    await prisma.product.update({
-      where: { id },
-      data: result.data,
-    });
+    await prisma.product.update({ where: { id }, data: result.data });
     revalidatePath("/products");
     return { success: true };
   } catch (error) {

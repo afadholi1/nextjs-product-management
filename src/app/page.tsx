@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Package, Tag, Wallet, ArrowRight } from "lucide-react";
 
 export default async function DashboardPage() {
-  // Ambil data agregat dari Prisma
+  // Ambil data agregat: jumlah produk, brand, dan total stok
   const [productCount, brandCount, totalStock] = await Promise.all([
     prisma.product.count(),
     prisma.brand.count(),
     prisma.product.aggregate({ _sum: { stock: true } }),
   ]);
 
+  // Konfigurasi kartu statistik
   const stats = [
     {
       title: "Total Produk",
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Total Stok",
-      value: totalStock._sum.stock || 0,
+      value: totalStock._sum.stock || 0, // fallback 0 jika null
       icon: <Wallet className="h-4 w-4 text-muted-foreground" />,
     },
   ];
@@ -34,13 +35,14 @@ export default async function DashboardPage() {
     <div className="p-8 space-y-8">
       <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
 
-      {/* Tombol ke halaman Product */}
-        <Link href="/products">
-          <Button variant="outline" className="gap-2 mb-3">
-            Lihat Produk <ArrowRight className="h-4 w-4 " />
-          </Button>
-        </Link>
-      
+      {/* Shortcut ke halaman Products */}
+      <Link href="/products">
+        <Button variant="outline" className="gap-2 mb-3">
+          Lihat Produk <ArrowRight className="h-4 w-4 " />
+        </Button>
+      </Link>
+
+      {/* Grid kartu statistik */}
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.title}>

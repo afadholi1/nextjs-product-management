@@ -10,8 +10,9 @@ export function DeleteProductButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
+    // Konfirmasi sebelum menghapus
     if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
-    
+
     setLoading(true);
     const res = await deleteProductAction(id);
     if (res.success) {
@@ -23,10 +24,11 @@ export function DeleteProductButton({ id }: { id: string }) {
   };
 
   return (
-    <Button 
-      variant="destructive" 
-      size="icon" 
-      onClick={handleDelete} 
+    // Tombol hapus dengan state loading
+    <Button
+      variant="destructive"
+      size="icon"
+      onClick={handleDelete}
       disabled={loading}
     >
       <Trash2 className="h-4 w-4" />

@@ -3,10 +3,10 @@ import { getProducts, getBrands } from "@/services/product-service";
 import { ProductTable } from "@/components/product/ProductTable";
 import { AddProductModal } from "@/components/product/AddProductModal";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react"; // Import icon back
+import { ChevronLeft } from "lucide-react";
 
 export default async function ProductsPage() {
-  // Fetching data paralel di Server
+  // Fetch produk dan brand secara paralel di server
   const [products, brands] = await Promise.all([
     getProducts(),
     getBrands(),
@@ -14,23 +14,24 @@ export default async function ProductsPage() {
 
   return (
     <div className="p-8 space-y-6">
-       {/* Tombol Kembali ke Dashboard */}
-          <Link href="/">
-            <Button variant="ghost" size="icon">
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          
+      {/* Tombol kembali ke Dashboard */}
+      <Link href="/">
+        <Button variant="ghost" size="icon">
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+      </Link>
+
+      {/* Header halaman */}
       <div className="flex justify-between items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Products</h1>
           <p className="text-muted-foreground">Kelola stok dan harga produk Anda.</p>
         </div>
-        {/* Tombol Tambah dengan Modal */}
+        {/* Modal tambah produk baru */}
         <AddProductModal brands={brands} />
       </div>
 
-      {/* Tabel Produk */}
+      {/* Tabel daftar produk */}
       <ProductTable products={products} brands={brands} />
     </div>
   );

@@ -40,6 +40,7 @@ interface EditProductProps {
 export function EditProductModal({ product, brands }: EditProductProps) {
   const [open, setOpen] = useState(false);
 
+  // Inisialisasi form dengan data produk yang akan diedit
   const {
     register,
     handleSubmit,
@@ -47,7 +48,6 @@ export function EditProductModal({ product, brands }: EditProductProps) {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(productSchema),
-    // Penting: Mengisi form dengan data lama
     defaultValues: {
       name: product.name,
       price: product.price,
@@ -56,6 +56,7 @@ export function EditProductModal({ product, brands }: EditProductProps) {
     },
   });
 
+  // Submit: kirim perubahan ke server action, tampilkan toast, tutup modal
   const onSubmit = async (data: ProductInput) => {
     const res = await updateProductAction(product.id, data);
     if (res.success) {
@@ -78,37 +79,40 @@ export function EditProductModal({ product, brands }: EditProductProps) {
           <DialogTitle>Edit Produk</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
+          {/* Field nama produk */}
           <div className="space-y-2">
             <Label htmlFor="edit-name">Nama Produk</Label>
             <Input id="edit-name" {...register("name")} />
             {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
           </div>
 
+          {/* Field harga dan stok dalam dua kolom */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-price">Harga</Label>
-              <Input 
-                id="edit-price" 
-                type="number" 
-                {...register("price", { valueAsNumber: true })} 
+              <Input
+                id="edit-price"
+                type="number"
+                {...register("price", { valueAsNumber: true })}
               />
               {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-stock">Stok</Label>
-              <Input 
-                id="edit-stock" 
-                type="number" 
-                {...register("stock", { valueAsNumber: true })} 
+              <Input
+                id="edit-stock"
+                type="number"
+                {...register("stock", { valueAsNumber: true })}
               />
               {errors.stock && <p className="text-xs text-red-500">{errors.stock.message}</p>}
             </div>
           </div>
 
+          {/* Dropdown brand dengan nilai awal dari data produk */}
           <div className="space-y-2">
             <Label>Brand</Label>
-            <Select 
-              defaultValue={product.brandId} // Set nilai awal dropdown
+            <Select
+              defaultValue={product.brandId}
               onValueChange={(value) => setValue("brandId", value)}
             >
               <SelectTrigger>
@@ -125,6 +129,7 @@ export function EditProductModal({ product, brands }: EditProductProps) {
             {errors.brandId && <p className="text-xs text-red-500">{errors.brandId.message}</p>}
           </div>
 
+          {/* Tombol submit dengan state loading */}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Menyimpan Perubahan..." : "Update Produk"}
           </Button>
