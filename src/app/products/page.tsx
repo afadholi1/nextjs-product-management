@@ -31,7 +31,7 @@ export default async function ProductsPage() {
       </div>
 
       {/* Tabel Produk */}
-      <ProductTable products={products} />
+      <ProductTable products={products} brands={brands} />
     </div>
   );
 }

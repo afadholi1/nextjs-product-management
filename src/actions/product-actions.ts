@@ -33,3 +33,38 @@ export async function createProductAction(data: unknown) {
     };
   }
 }
+
+// Tambahkan action hapus
+export async function deleteProductAction(id: string) {
+  try {
+    await prisma.product.delete({
+      where: { id },
+    });
+    revalidatePath("/products");
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, message: "Gagal menghapus produk" };
+  }
+}
+
+// Tambahkan action edit
+export async function updateProductAction(id: string, data: unknown) {
+  const result = productSchema.safeParse(data);
+
+  if (!result.success) {
+    return { success: false, errors: result.error.flatten().fieldErrors };
+  }
+
+  try {
+    await prisma.product.update({
+      where: { id },
+      data: result.data,
+    });
+    revalidatePath("/products");
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, message: "Gagal memperbarui produk" };
+  }
+}
