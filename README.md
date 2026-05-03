@@ -13,27 +13,18 @@ Aplikasi web Full-stack yang memungkinkan pengguna untuk melakukan operasi CRUD 
 
 ## 🏁 Cara Menjalankan
 
-1. **Clone repository:**
+1. Clone repo & install dependensi:
 ```bash
 git clone https://github.com/afadholi1/nextjs-product-management.git
-cd nama-repo
-```
-
-2. **Install dependensi:**
-```bash
+cd nextjs-product-management
 npm install
 ```
 
-3. **Setup Environment Variables:**  
-Buat file `.env` dan masukkan `DATABASE_URL` PostgreSQL (Neon) kamu.
+2. Buat file `.env` dan isi `DATABASE_URL` dengan koneksi PostgreSQL (Neon).
 
-4. **Sinkronisasi Database:**
+3. Sinkronisasi database & jalankan:
 ```bash
 npx prisma db push
 npx prisma db seed
-```
-
-5. **Jalankan Aplikasi:**
-```bash
 npm run dev
 ```
