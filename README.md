@@ -25,7 +25,7 @@ npm install
 ```
 
 3. **Setup Environment Variables:**
-Buat file `.env` dan masukkan DATABASE_URL PostgreSQL (Neon) kamu.
+Buat file `.env` dan masukkan `DATABASE_URL` PostgreSQL (Neon) kamu.
 
 4. **Sinkronisasi Database:**
 ```bash
