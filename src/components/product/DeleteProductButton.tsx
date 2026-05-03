@@ -2,7 +2,7 @@
 
 import { deleteProductAction } from "@/actions/product-actions";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -13,14 +13,21 @@ export function DeleteProductButton({ id }: { id: string }) {
     // Konfirmasi sebelum menghapus
     if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
 
-    setLoading(true);
-    const res = await deleteProductAction(id);
-    if (res.success) {
-      toast.success("Produk dihapus");
-    } else {
-      toast.error(res.message);
+    try {
+      setLoading(true);
+      const res = await deleteProductAction(id);
+
+      if (res.success) {
+        toast.success("Produk berhasil dihapus");
+      } else {
+        toast.error(res.message || "Gagal menghapus produk");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Terjadi kesalahan server");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -31,7 +38,11 @@ export function DeleteProductButton({ id }: { id: string }) {
       onClick={handleDelete}
       disabled={loading}
     >
-      <Trash2 className="h-4 w-4" />
+        {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Trash2 className="h-4 w-4" />
+      )}
     </Button>
   );
 }

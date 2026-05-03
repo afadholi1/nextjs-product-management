@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <main>{children}</main>
         {/* Komponen toast notifikasi global */}
-        <Toaster />
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
