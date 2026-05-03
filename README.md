@@ -19,12 +19,12 @@ git clone https://github.com/afadholi1/nextjs-product-management.git
 cd nama-repo
 ```
 
-2. **Clone repository:**
+2. **Install dependensi:**
 ```bash
 npm install
 ```
 
-3. **Setup Environment Variables:**
+3. **Setup Environment Variables:**  
 Buat file `.env` dan masukkan `DATABASE_URL` PostgreSQL (Neon) kamu.
 
 4. **Sinkronisasi Database:**
