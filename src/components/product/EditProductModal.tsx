@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema, ProductInput } from "@/lib/validations";
 import { updateProductAction } from "@/actions/product-actions";
@@ -40,13 +40,13 @@ interface EditProductProps {
 export function EditProductModal({ product, brands }: EditProductProps) {
   const [open, setOpen] = useState(false);
 
-  // Inisialisasi form dengan data produk yang akan diedit
+  // React Hook Form
   const {
     register,
+    control,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: product.name,
@@ -56,9 +56,10 @@ export function EditProductModal({ product, brands }: EditProductProps) {
     },
   });
 
-  // Submit: kirim perubahan ke server action, tampilkan toast, tutup modal
+  // Submit Handler
   const onSubmit = async (data: ProductInput) => {
     const res = await updateProductAction(product.id, data);
+
     if (res.success) {
       toast.success("Produk berhasil diperbarui!");
       setOpen(false);
@@ -68,68 +69,100 @@ export function EditProductModal({ product, brands }: EditProductProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => !isSubmitting && setOpen(v)}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Edit Produk</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
-          {/* Field nama produk */}
+          {/* Nama Produk */}
           <div className="space-y-2">
             <Label htmlFor="edit-name">Nama Produk</Label>
-            <Input id="edit-name" {...register("name")} />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+            <Input
+              id="edit-name"
+              disabled={isSubmitting}
+              {...register("name")}
+            />
+            {errors.name && (
+              <p className="text-xs text-red-500">{errors.name.message}</p>
+            )}
           </div>
 
-          {/* Field harga dan stok dalam dua kolom */}
+          {/* Harga & Stok */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="edit-price">Harga</Label>
               <Input
                 id="edit-price"
                 type="number"
+                disabled={isSubmitting}
                 {...register("price", { valueAsNumber: true })}
               />
-              {errors.price && <p className="text-xs text-red-500">{errors.price.message}</p>}
+              {errors.price && (
+                <p className="text-xs text-red-500">{errors.price.message}</p>
+              )}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="edit-stock">Stok</Label>
               <Input
                 id="edit-stock"
                 type="number"
+                disabled={isSubmitting}
                 {...register("stock", { valueAsNumber: true })}
               />
-              {errors.stock && <p className="text-xs text-red-500">{errors.stock.message}</p>}
+              {errors.stock && (
+                <p className="text-xs text-red-500">{errors.stock.message}</p>
+              )}
             </div>
           </div>
 
-          {/* Dropdown brand dengan nilai awal dari data produk */}
+          {/* Brand */}
           <div className="space-y-2">
             <Label>Brand</Label>
-            <Select
-              defaultValue={product.brandId}
-              onValueChange={(value) => setValue("brandId", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Pilih Brand" />
-              </SelectTrigger>
-              <SelectContent>
-                {brands.map((brand) => (
-                  <SelectItem key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.brandId && <p className="text-xs text-red-500">{errors.brandId.message}</p>}
+
+            <Controller
+              name="brandId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={(v) => {
+                    field.onChange(v);
+                    field.onBlur();
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger
+                    className={errors.brandId ? "border-red-500" : ""}
+                  >
+                    <SelectValue placeholder="Pilih Brand" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+
+            {errors.brandId && (
+              <p className="text-xs text-red-500">{errors.brandId.message}</p>
+            )}
           </div>
 
-          {/* Tombol submit dengan state loading */}
+          {/* Button Submit */}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Menyimpan Perubahan..." : "Update Produk"}
           </Button>

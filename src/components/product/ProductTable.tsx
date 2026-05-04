@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { EditProductModal } from "./EditProductModal";
 import { DeleteProductButton } from "./DeleteProductButton";
+import { formatIDR } from "@/lib/utils";
 
 // Tipe data produk beserta relasi brand-nya
 interface ProductWithBrand {
@@ -30,17 +31,8 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ products, brands }: ProductTableProps) {
-  // Format angka ke format mata uang Rupiah
-  const formatIDR = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
   return (
-    <div className="rounded-md border bg-white">
+    <div className="rounded-md border bg-card">
       <Table>
         <TableHeader>
           <TableRow>
@@ -51,40 +43,57 @@ export function ProductTable({ products, brands }: ProductTableProps) {
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          {/* Tampilkan pesan jika belum ada produk */}
           {products.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+              <TableCell
+                colSpan={5}
+                className="text-center py-10 text-muted-foreground"
+              >
                 Belum ada produk yang terdaftar.
               </TableCell>
             </TableRow>
           ) : (
             products.map((p) => (
-              <TableRow key={p.id} className="hover:bg-slate-50/50 transition-colors">
+              <TableRow
+                key={p.id}
+                className="hover:bg-muted/40 transition-colors"
+              >
                 <TableCell className="font-medium text-slate-900">
                   {p.name}
                 </TableCell>
-                {/* Badge nama brand */}
+
                 <TableCell>
                   <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                    {p.brand.name}
+                     {p.brand?.name ?? "Tidak ada brand"}
                   </span>
                 </TableCell>
-                {/* Stok merah jika kurang dari 5 */}
+
                 <TableCell>
-                  <span className={p.stock < 5 ? "text-red-600 font-bold" : ""}>
-                    {p.stock} <span className="text-xs text-muted-foreground font-normal">unit</span>
+                  <span
+                    className={
+                      p.stock < 5
+                        ? "text-red-600 font-bold"
+                        : "text-slate-700"
+                    }
+                  >
+                    {p.stock}
+                    <span className="text-xs text-muted-foreground font-normal">
+                      {" "}
+                      unit
+                    </span>
                   </span>
                 </TableCell>
+
                 <TableCell className="font-mono text-sm">
                   {formatIDR(p.price)}
                 </TableCell>
-                {/* Tombol aksi edit dan hapus */}
+
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <EditProductModal product={p} brands={brands} />
-                    <DeleteProductButton id={p.id} />
+                    <EditProductModal  aria-label="Edit produk" product={p} brands={brands} />
+                    <DeleteProductButton aria-label="Hapus produk" id={p.id} />
                   </div>
                 </TableCell>
               </TableRow>
