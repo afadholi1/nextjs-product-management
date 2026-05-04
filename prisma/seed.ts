@@ -17,6 +17,18 @@ async function main() {
   const sony = await prisma.brand.create({
     data: { name: "Sony" },
   });
+  const xiaomi = await prisma.brand.create({
+    data: { name: "Xiaomi" },
+  });
+  const oppo = await prisma.brand.create({
+    data: { name: "Oppo" },
+  });
+  const vivo = await prisma.brand.create({
+    data: { name: "Vivo" },
+  });
+  const realme = await prisma.brand.create({
+    data: { name: "Realme" },
+  });
 
   console.log("📦 Membuat produk awal...");
   await prisma.product.createMany({
@@ -29,6 +41,10 @@ async function main() {
         brandId: samsung.id,
       },
       { name: "Sony WH-1000XM5", price: 5000000, stock: 15, brandId: sony.id },
+      { name: "Xiaomi 14", price: 8000000, stock: 20, brandId: xiaomi.id },
+      { name: "Oppo Find X7", price: 9000000, stock: 12, brandId: oppo.id },
+      { name: "Vivo V30 Pro", price: 7000000, stock: 18, brandId: vivo.id },
+      { name: "Realme GT 6", price: 6000000, stock: 25, brandId: realme.id },
     ],
   });
 
@@ -43,3 +59,6 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+
+
